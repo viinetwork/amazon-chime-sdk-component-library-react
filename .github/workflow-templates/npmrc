@@ -1,0 +1,2 @@
+@viinetwork:registry=https://packages.viimed.net/repository/npm/
+//packages.viimed.net/repository/npm/:_authToken={{ npm_token }}

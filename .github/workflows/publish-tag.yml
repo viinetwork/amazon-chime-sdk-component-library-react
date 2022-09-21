@@ -1,0 +1,43 @@
+on:
+  release:
+    types:
+      - edited
+      - published
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      # npm version run step updates and commits the new version
+      contents: write
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "16"
+      - run: npm install
+      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+      - run: npm version from-git --allow-same-version
+# Would ideally use these to push to npm, but...
+# https://github.com/JS-DevTools/npm-publish/issues/46
+# ...needs to be fixed first, since our registry is at a subpath.
+#       - uses: JS-DevTools/npm-publish@v1
+#         with:
+#           registry: https://repo.dog.dev.viimed.com/repository/npm/
+#           token: ${{ secrets.VIINETWORK_NPM_TOKEN }}
+#           check-version: true
+# So instead we'll just set it up and publish manually
+      - uses: kikyous/template-action@v2.0.5
+        with:
+          template-path: .github/workflow-templates/npmrc
+          ext-inputs: '{"npm_token": "${{ secrets.VIINETWORK_NPM_TOKEN }}"}'
+          post-run: echo "<%- output %>" > .npmrc
+      - uses: cuchi/jinja2-action@v1.2.0
+        with:
+          template: .github/workflow-templates/npmrc
+          output_file: .npmrc
+          variables: |
+            npm_token=${{ secrets.VIINETWORK_NPM_TOKEN }}
+      - run: npm publish
