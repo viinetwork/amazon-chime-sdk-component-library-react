@@ -103,7 +103,7 @@
     "prettier": "^2.4.1",
     "prompt-sync": "^4.2.0",
     "puppeteer": "^2.1.1",
-    "react": "^18.0.0",
+    "react": "^18.2.0",
     "react-docgen-typescript-loader": "^3.7.2",
     "react-dom": "^18.0.0",
     "react-is": "^17.0.0",
